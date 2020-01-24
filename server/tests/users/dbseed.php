@@ -11,5 +11,5 @@ $statement = <<<EOS
         (4, 'Richard', 'Feynman', 'rfeynman@gmail.com');
 EOS;
 
-$createTable = $dbConnection->exec($statement);
+$createTable = $db_connection->exec($statement);
 echo "Success!\n";

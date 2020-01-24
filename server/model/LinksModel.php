@@ -3,9 +3,8 @@
  * Handles db related operations for GoLinks
  * Each link is mapped to a particular user, so user_id is needed to get the correct golink for a user.
 */
-
 class LinksModel{
-  private $db = null;
+  private $db;
 
   public function __construct($db){
     $this->db = db;
