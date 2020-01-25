@@ -1,0 +1,2 @@
+<?php
+// check that jwt if valid and check if request include user_id and check if it matches with user_id in payload. If not, then user is trying to request info from another user. Return 401. If id's match, then user is requesting info from themselves, continue
