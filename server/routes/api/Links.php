@@ -27,10 +27,10 @@ class Links{
         $response = $this->createGoLink($this->user_id);
         break;     
       case 'PUT':
-        $response = $this->updateGoLink($this->user_id, $this->link_name);
+        $response = $this->updateGoLink($this->link_name, $this->user_id);
         break;      
       case 'DELETE':
-        $response = $this->deleteGoLink($this->user_id, $this->link_name);
+        $response = $this->deleteGoLink($this->link_name, $this->user_id);
         break;
       default:
         $response = $this->notFoundResponse();
@@ -62,7 +62,7 @@ class Links{
     @desc    Create a new golink for a user
     @access  Public
   */
-  public function createGoLink($user_id){
+  private function createGoLink($user_id){
     $golink = (array) json_decode(file_get_contents('php://input'), TRUE);
 
     // Check that payload has the necessary data before adding to db
@@ -96,7 +96,7 @@ class Links{
     @desc    Update a golink for a user
     @access  Public
   */
-  public function updateGoLink($user_id, $link_name){  
+  private function updateGoLink($link_name, $user_id){  
     $golink = (array) json_decode(file_get_contents('php://input'), TRUE);
 
     if(!$this->checkPayload("update", $golink)){
@@ -106,7 +106,7 @@ class Links{
     // Check if link name exists
     $doesLinkNameExist = $this->links_model->checkLinkName($link_name, $user_id);
 
-    // Links name does not exists, return 404
+    // Links name does not exist, return 404
     if($doesLinkNameExist['checkLink'] == 0){
       return $this->notFoundResponse();       
     }
@@ -126,7 +126,7 @@ class Links{
     @desc    Delete a golink
     @access  Public
   */
-  private function deleteGoLink($user_id, $link_name){
+  private function deleteGoLink($link_name, $user_id){
     $this->links_model->deleteGoLink($link_name, $user_id);
   
     $response['status_code_header'] = 'HTTP/1.1 204 OK';

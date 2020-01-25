@@ -31,8 +31,10 @@ class UsersModel{
   public function getUser($user_id){
     $queryStr = "
       SELECT *
-      FROM Users
-      WHERE user_id = :user_id
+      FROM 
+        Users
+      WHERE 
+        user_id = :user_id
     ";
 
     $stmt = $this->db->prepare($queryStr);
@@ -44,8 +46,10 @@ class UsersModel{
   // Delete user from db
   public function deleteUser($user_id){
     $queryStr = "
-      DELETE FROM Users
-      WHERE user_id = :user_id
+      DELETE FROM 
+        Users
+      WHERE 
+        user_id = :user_id
     ";
 
     $stmt = $this->db->prepare($queryStr);

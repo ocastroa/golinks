@@ -1,6 +1,6 @@
 <?php
 namespace Src\Routes\Api;
-use  Src\Model\UsersModel;
+use Src\Model\UsersModel;
 
 class Users{
   private $db = null;
@@ -41,7 +41,7 @@ class Users{
   @access  Public
   */
   // Need jwt token to complete transaction. Call AuthMiddleware to verify jwt
-  public function getUser($user_id){
+  private function getUser($user_id){
     $result =  $this->user_model->getUser($user_id);
     if (!$result) {
       return $this->notFoundResponse();

@@ -11,10 +11,14 @@ class LinksModel{
   // Check if link name is already in db. 
   public function checkLinkName($link_name, $user_id){
     $queryStr = "
-      SELECT COUNT(1) AS checkLink
-      FROM Links 
-      WHERE link_name= :link_name
-      AND user_id = :user_id
+      SELECT 
+        COUNT(1) AS checkLink
+      FROM 
+        Links 
+      WHERE 
+        link_name= :link_name
+      AND 
+        user_id = :user_id
     ";
 
     $stmt = $this->db->prepare($queryStr);
@@ -52,8 +56,10 @@ class LinksModel{
   public function getAllGoLinks($user_id){
     $queryStr = "
       SELECT *
-      FROM Links
-      WHERE user_id = :user_id
+      FROM 
+        Links
+      WHERE
+         user_id = :user_id
     ";
 
     $stmt = $this->db->prepare($queryStr);
@@ -66,14 +72,17 @@ class LinksModel{
   public function getGoLink($link_name, $user_id){
     $queryStr = "
       SELECT *
-      FROM Links
-      WHERE user_id = :user_id
-      AND link_name = :link_name
+      FROM 
+        Links
+      WHERE 
+        link_name= :link_name
+      AND 
+        user_id = :user_id
     ";
 
     $stmt = $this->db->prepare($queryStr);
-    $stmt->execute(['user_id' => $user_id, 'link_name' => $link_name]);
-    $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    $stmt->execute(['link_name' => $link_name, 'user_id' => $user_id,]);
+    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
     return $result;
   }
 
@@ -81,18 +90,39 @@ class LinksModel{
   public function getNewGoLink($user_id){
     $queryStr = "
       SELECT *
-      FROM Links
-      WHERE user_id = :user_id
-      ORDER BY link_id DESC
+      FROM 
+        Links
+      WHERE 
+        user_id = :user_id
+      ORDER BY 
+        link_id DESC
       LIMIT 1;
     ";
 
     $stmt = $this->db->prepare($queryStr);
     $stmt->execute(['user_id' => $user_id]);
-    $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
     return $result;
   }
   
+  // Get destination url for golink
+  public function getDestinationUrl($link_name, $user_id){
+    $queryStr = "
+      SELECT 
+        destination_url
+      FROM 
+        Links
+      WHERE 
+        link_name= :link_name
+      AND 
+        user_id = :user_id
+    ";
+
+    $stmt = $this->db->prepare($queryStr);
+    $stmt->execute(['link_name' => $link_name, 'user_id' => $user_id,]);
+    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+    return $result;
+  }
 
   // Update a golink
   public function updateGoLink(Array $golink, $link_name, $user_id){
@@ -121,9 +151,12 @@ class LinksModel{
   // Delete a golink
   public function deleteGoLink($link_name, $user_id){
     $queryStr = "
-      DELETE FROM Links
-      WHERE link_name = :link_name
-      AND user_id = :user_id
+      DELETE FROM 
+        Links
+      WHERE 
+        link_name = :link_name
+      AND 
+        user_id = :user_id
     ";
 
     $stmt = $this->db->prepare($queryStr);
