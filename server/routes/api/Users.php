@@ -5,13 +5,13 @@ use Src\Model\UsersModel;
 class Users{
   private $db = null;
   private $req_method = null;
-  private $user_id = null;
+  private $user_email = null;
   private $user_model = null;
 
-  public function __construct($db, $req_method, $user_id){
+  public function __construct($db, $req_method, $user_email){
     $this->db = $db;
     $this->req_method = $req_method;
-    $this->user_id = $user_id;
+    $this->user_email = $user_email;
 
     $this->user_model = new UsersModel($db);
   }
@@ -19,10 +19,10 @@ class Users{
   public function request(){
     switch ($this->req_method) {
       case 'GET':
-        $response = $this->getUser($this->user_id);
+        $response = $this->getUser($this->user_email);
         break;
       case 'DELETE':
-        $response = $this->deleteUser($this->user_id);
+        $response = $this->deleteUser($this->user_email);
         break;
       default:
         $response = $this->notFoundResponse();
@@ -36,13 +36,12 @@ class Users{
   }
 
   /*
-  @route   GET v1/users/:user_id
-  @desc    Get a user by id
-  @access  Public
+    @route   GET v1/users
+    @desc    Get user's information
+    @access  Public
   */
-  // Need jwt token to complete transaction. Call AuthMiddleware to verify jwt
-  private function getUser($user_id){
-    $result =  $this->user_model->getUser($user_id);
+  private function getUser($user_email){
+    $result =  $this->user_model->getUser($user_email);
     if (!$result) {
       return $this->notFoundResponse();
     }
@@ -53,18 +52,17 @@ class Users{
   }
 
   /*
-    @route   DELETE v1/users/:user_id
-    @desc    Delete a user by id
+    @route   DELETE v1/users
+    @desc    Delete a user
     @access  Public
   */
-  // Need jwt token to complete transaction. Call AuthMiddleware to verify jwt
-  private function deleteUser($id){
-    $result =  $this->user_model->getUser($user_id);
+  private function deleteUser($user_email){
+    $result =  $this->user_model->getUser($user_email);
     if (!$result) {
       return $this->notFoundResponse();
     }
 
-    $this->user_model->deleteUser($id);
+    $this->user_model->deleteUser($user_email);
 
     $response['status_code_header'] = 'HTTP/1.1 204 OK';
     $response['body'] = null;

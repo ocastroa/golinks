@@ -28,32 +28,32 @@ class UsersModel{
   }
 
   // Get specific user from db
-  public function getUser($user_id){
+  public function getUser($email){
     $queryStr = "
       SELECT *
       FROM 
         Users
       WHERE 
-        user_id = :user_id
+        email = :email
     ";
 
     $stmt = $this->db->prepare($queryStr);
-    $stmt->execute(['user_id' => $user_id]);
+    $stmt->execute(['email' => $email]);
     $result = $stmt->fetch(\PDO::FETCH_ASSOC);
     return $result;
   }
 
   // Delete user from db
-  public function deleteUser($user_id){
+  public function deleteUser($email){
     $queryStr = "
       DELETE FROM 
         Users
       WHERE 
-        user_id = :user_id
+        email = :email
     ";
 
     $stmt = $this->db->prepare($queryStr);
-    $stmt->execute(['user_id' => $user_id]);
+    $stmt->execute(['email' => $email]);
     $result = $stmt->rowCount();
     return $result;
   }

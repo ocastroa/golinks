@@ -5,14 +5,14 @@ use Src\Model\LinksModel;
 class Links{
   private $db = null;
   private $req_method = null;
-  private $user_id = null;
+  private $user_email = null;
   private $link_name = null;
   private $links_model = null;
 
-  public function __construct($db, $req_method, $user_id, $link_name){
+  public function __construct($db, $req_method, $user_email, $link_name){
     $this->db = $db;
     $this->req_method = $req_method;
-    $this->user_id = $user_id;
+    $this->user_email = $user_email;
     $this->link_name = $link_name; 
 
     $this->links_model = new LinksModel($db);
@@ -21,16 +21,16 @@ class Links{
   public function request(){
     switch ($this->req_method) {
       case 'GET':
-        $response = $this->getAllGoLinks($this->user_id);
+        $response = $this->getAllGoLinks($this->user_email);
         break;
       case 'POST':
-        $response = $this->createGoLink($this->user_id);
+        $response = $this->createGoLink($this->user_email);
         break;     
       case 'PUT':
-        $response = $this->updateGoLink($this->link_name, $this->user_id);
+        $response = $this->updateGoLink($this->link_name, $this->user_email);
         break;      
       case 'DELETE':
-        $response = $this->deleteGoLink($this->link_name, $this->user_id);
+        $response = $this->deleteGoLink($this->link_name, $this->user_email);
         break;
       default:
         $response = $this->notFoundResponse();
@@ -48,8 +48,8 @@ class Links{
     @desc    Get all links user has created
     @access  Public
   */
-  public function getAllGoLinks($user_id){
-    $result = $this->links_model->getAllGoLinks($user_id);
+  public function getAllGoLinks($user_email){
+    $result = $this->links_model->getAllGoLinks($user_email);
 
     // $result will have an empty body if user has not created any golinks
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
@@ -62,7 +62,7 @@ class Links{
     @desc    Create a new golink for a user
     @access  Public
   */
-  private function createGoLink($user_id){
+  private function createGoLink($user_email){
     $golink = (array) json_decode(file_get_contents('php://input'), TRUE);
 
     // Check that payload has the necessary data before adding to db
@@ -71,7 +71,7 @@ class Links{
     };
 
     // Check if user is already using that link name
-    $doesLinkNameExist = $this->links_model->checkLinkName($golink["link_name"], $user_id);
+    $doesLinkNameExist = $this->links_model->checkLinkName($golink["link_name"], $user_email);
 
     // Links name already exists for user
     if($doesLinkNameExist['checkLink'] == 1){
@@ -81,10 +81,10 @@ class Links{
       return $response;
     }
 
-    $this->links_model->createGoLink($golink, $user_id);
+    $this->links_model->createGoLink($golink, $user_email);
 
     // Return newly created golink
-    $result = $this->links_model->getNewGoLink($user_id);
+    $result = $this->links_model->getNewGoLink($user_email);
 
     $response['status_code_header'] = 'HTTP/1.1 201 Created';
     $response['body'] =  json_encode($result);
@@ -92,11 +92,11 @@ class Links{
   }
 
   /*
-    @route   PUT v1/links/:user_id
+    @route   PUT v1/links/
     @desc    Update a golink for a user
     @access  Public
   */
-  private function updateGoLink($link_name, $user_id){  
+  private function updateGoLink($link_name, $user_email){  
     $golink = (array) json_decode(file_get_contents('php://input'), TRUE);
 
     if(!$this->checkPayload("update", $golink)){
@@ -104,17 +104,17 @@ class Links{
     };
 
     // Check if link name exists
-    $doesLinkNameExist = $this->links_model->checkLinkName($link_name, $user_id);
+    $doesLinkNameExist = $this->links_model->checkLinkName($link_name, $user_email);
 
     // Links name does not exist, return 404
     if($doesLinkNameExist['checkLink'] == 0){
       return $this->notFoundResponse();       
     }
 
-    $this->links_model->updateGoLink($golink, $link_name, $user_id);
+    $this->links_model->updateGoLink($golink, $link_name, $user_email);
   
     // Return updated resource
-    $result = $this->links_model->getGoLink($link_name, $user_id);
+    $result = $this->links_model->getGoLink($link_name, $user_email);
 
     $response['status_code_header'] = 'HTTP/1.1 200 OK';
     $response['body'] = json_encode($result);
@@ -122,12 +122,12 @@ class Links{
   }
   
   /*
-    @route   DELETE v1/links/:user_id
+    @route   DELETE v1/links
     @desc    Delete a golink
     @access  Public
   */
-  private function deleteGoLink($link_name, $user_id){
-    $this->links_model->deleteGoLink($link_name, $user_id);
+  private function deleteGoLink($link_name, $user_email){
+    $this->links_model->deleteGoLink($link_name, $user_email);
   
     $response['status_code_header'] = 'HTTP/1.1 204 OK';
     $response['body'] = null;

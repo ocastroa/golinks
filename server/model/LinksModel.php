@@ -1,6 +1,7 @@
 <?php
 namespace Src\Model;
 
+// Handles db related operations for Links
 class LinksModel{
   private $db = null;
 
@@ -9,7 +10,7 @@ class LinksModel{
   }
 
   // Check if link name is already in db. 
-  public function checkLinkName($link_name, $user_id){
+  public function checkLinkName($link_name, $email){
     $queryStr = "
       SELECT 
         COUNT(1) AS checkLink
@@ -18,13 +19,13 @@ class LinksModel{
       WHERE 
         link_name= :link_name
       AND 
-        user_id = :user_id
+        email = :email
     ";
 
     $stmt = $this->db->prepare($queryStr);
     $stmt->execute([
       'link_name' => $link_name,
-      'user_id' => $user_id
+      'email' => $email
     ]);
     // Returns 0 if link name does not exists
     $result = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -32,13 +33,13 @@ class LinksModel{
   }
 
   // Create a new golink
-  public function createGoLink(Array $golink,  $user_id){
+  public function createGoLink(Array $golink,  $email){
     $queryStr = "
       INSERT INTO Links
-          (link_name, destination_url, description, user_id)
+          (link_name, destination_url, description, email)
       VALUES
           (:link_name, :destination_url, 
-          :description, :user_id)
+          :description, :email)
     ";
 
     $stmt = $this->db->prepare($queryStr);
@@ -46,30 +47,30 @@ class LinksModel{
       'link_name' => $golink['link_name'],
       'destination_url' => $golink['destination_url'],
       'description' => $golink['description'],
-      'user_id' => $user_id
+      'email' => $email
     ]);
     $result = $stmt->rowCount();
     return $result;
   }
 
   // Get all golinks
-  public function getAllGoLinks($user_id){
+  public function getAllGoLinks($email){
     $queryStr = "
       SELECT *
       FROM 
         Links
       WHERE
-         user_id = :user_id
+       email = :email
     ";
 
     $stmt = $this->db->prepare($queryStr);
-    $stmt->execute(['user_id' => $user_id]);
+    $stmt->execute(['email' => $email]);
     $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
     return $result;
   }
 
   // Get specific golink
-  public function getGoLink($link_name, $user_id){
+  public function getGoLink($link_name, $email){
     $queryStr = "
       SELECT *
       FROM 
@@ -77,36 +78,36 @@ class LinksModel{
       WHERE 
         link_name= :link_name
       AND 
-        user_id = :user_id
+       email = :email
     ";
 
     $stmt = $this->db->prepare($queryStr);
-    $stmt->execute(['link_name' => $link_name, 'user_id' => $user_id,]);
+    $stmt->execute(['link_name' => $link_name, 'email' => $email,]);
     $result = $stmt->fetch(\PDO::FETCH_ASSOC);
     return $result;
   }
 
   // Get newly created golink
-  public function getNewGoLink($user_id){
+  public function getNewGoLink($email){
     $queryStr = "
       SELECT *
       FROM 
         Links
       WHERE 
-        user_id = :user_id
+        email = :email
       ORDER BY 
         link_id DESC
       LIMIT 1;
     ";
 
     $stmt = $this->db->prepare($queryStr);
-    $stmt->execute(['user_id' => $user_id]);
+    $stmt->execute(['email' => $email]);
     $result = $stmt->fetch(\PDO::FETCH_ASSOC);
     return $result;
   }
   
   // Get destination url for golink
-  public function getDestinationUrl($link_name, $user_id){
+  public function getDestinationUrl($link_name, $email){
     $queryStr = "
       SELECT 
         destination_url
@@ -115,17 +116,17 @@ class LinksModel{
       WHERE 
         link_name= :link_name
       AND 
-        user_id = :user_id
+        email = :email
     ";
 
     $stmt = $this->db->prepare($queryStr);
-    $stmt->execute(['link_name' => $link_name, 'user_id' => $user_id,]);
+    $stmt->execute(['link_name' => $link_name, 'email' => $email]);
     $result = $stmt->fetch(\PDO::FETCH_ASSOC);
     return $result;
   }
 
   // Update a golink
-  public function updateGoLink(Array $golink, $link_name, $user_id){
+  public function updateGoLink(Array $golink, $link_name, $email){
     $queryStr = "
       UPDATE Links
       SET 
@@ -134,7 +135,7 @@ class LinksModel{
       WHERE 
         link_name= :link_name
       AND 
-        user_id = :user_id
+        email = :email
     ";
 
     $stmt = $this->db->prepare($queryStr);
@@ -142,27 +143,27 @@ class LinksModel{
       'destination_url' => $golink['destination_url'],
       'description' => $golink['description'],
       'link_name' => $link_name,
-      'user_id' => $user_id
+      'email' => $email
     ]);
     $result = $stmt->rowCount();
     return $result;
   }
 
   // Delete a golink
-  public function deleteGoLink($link_name, $user_id){
+  public function deleteGoLink($link_name, $email){
     $queryStr = "
       DELETE FROM 
         Links
       WHERE 
         link_name = :link_name
       AND 
-        user_id = :user_id
+        email = :email
     ";
 
     $stmt = $this->db->prepare($queryStr);
     $stmt->execute([
       'link_name' => $link_name,
-      'user_id' => $user_id
+      'email' => $email
     ]);
     $result = $stmt->rowCount();
     return $result;
