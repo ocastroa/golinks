@@ -25,8 +25,12 @@ class Users{
         $response = $this->deleteUser($this->user_email);
         break;
       default:
-        $response = $this->notFoundResponse();
-        break;
+        $failure_msg = json_encode(['Message' => "Method {$this->req_method} is not allowed for this resource", 'Success' => 
+        'false']);
+        
+        header('HTTP/1.1 405 Method Not Allowed');
+        echo($failure_msg);
+        exit();
     }
 
     header($response['status_code_header']);

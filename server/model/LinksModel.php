@@ -69,6 +69,51 @@ class LinksModel{
     return $result;
   }
 
+  // Update a golink
+  public function updateGoLink(Array $golink, $link_name, $email){
+    $queryStr = "
+      UPDATE 
+        Links
+      SET 
+        destination_url = :destination_url,
+        description = :description
+      WHERE 
+        link_name= :link_name
+      AND 
+        email = :email
+    ";
+
+    $stmt = $this->db->prepare($queryStr);
+    $stmt->execute([
+      'destination_url' => $golink['destination_url'],
+      'description' => $golink['description'],
+      'link_name' => $link_name,
+      'email' => $email
+    ]);
+    $result = $stmt->rowCount();
+    return $result;
+  }
+
+  // Delete a golink
+  public function deleteGoLink($link_name, $email){
+    $queryStr = "
+      DELETE FROM 
+        Links
+      WHERE 
+        link_name = :link_name
+      AND 
+        email = :email
+    ";
+
+    $stmt = $this->db->prepare($queryStr);
+    $stmt->execute([
+      'link_name' => $link_name,
+      'email' => $email
+    ]);
+    $result = $stmt->rowCount();
+    return $result;
+  }  
+
   // Get specific golink
   public function getGoLink($link_name, $email){
     $queryStr = "
@@ -125,13 +170,13 @@ class LinksModel{
     return $result;
   }
 
-  // Update a golink
-  public function updateGoLink(Array $golink, $link_name, $email){
+  // Increase the number of redirects for a golink
+  public function increaseVisitsCount($link_name, $email){
     $queryStr = "
-      UPDATE Links
+      UPDATE 
+        Links
       SET 
-        destination_url = :destination_url,
-        description = :description
+        visits_count = visits_count + 1
       WHERE 
         link_name= :link_name
       AND 
@@ -140,32 +185,10 @@ class LinksModel{
 
     $stmt = $this->db->prepare($queryStr);
     $stmt->execute([
-      'destination_url' => $golink['destination_url'],
-      'description' => $golink['description'],
-      'link_name' => $link_name,
-      'email' => $email
+    'link_name' => $link_name,
+    'email' => $email
     ]);
     $result = $stmt->rowCount();
     return $result;
   }
-
-  // Delete a golink
-  public function deleteGoLink($link_name, $email){
-    $queryStr = "
-      DELETE FROM 
-        Links
-      WHERE 
-        link_name = :link_name
-      AND 
-        email = :email
-    ";
-
-    $stmt = $this->db->prepare($queryStr);
-    $stmt->execute([
-      'link_name' => $link_name,
-      'email' => $email
-    ]);
-    $result = $stmt->rowCount();
-    return $result;
-  }  
 }

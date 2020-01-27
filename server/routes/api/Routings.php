@@ -44,9 +44,12 @@ class Routings{
 
     // Links name does not exist or was not entered
     if($doesLinkNameExist['checkLink'] == 0 || !isset($link_name)){
-      // redirect to user's dashboard  
+      // redirect to user's dashboard 
+      echo("redirecting to login page");
     }
 
+    // Increase visit count by 1
+    $this->links_model->increaseVisitsCount($link_name, $user_email);
     $destination_url = $this->links_model->getDestinationUrl($link_name, $user_email);
 
     header('HTTP/1.1 302 Found');

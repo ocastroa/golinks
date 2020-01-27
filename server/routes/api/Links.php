@@ -27,14 +27,29 @@ class Links{
         $response = $this->createGoLink($this->user_email);
         break;     
       case 'PUT':
+        // Link name must be present in URI
+        if(!isset($this->link_name)){
+          $response = $this->badRequest();  
+          break;
+        }
+
         $response = $this->updateGoLink($this->link_name, $this->user_email);
         break;      
       case 'DELETE':
+        if(!isset($this->link_name)){
+          $response = $this->badRequest();  
+          break;
+        }
+
         $response = $this->deleteGoLink($this->link_name, $this->user_email);
         break;
       default:
-        $response = $this->notFoundResponse();
-        break;
+        $failure_msg = json_encode(['Message' => "Method {$this->req_method} is not allowed for this resource", 'Success' => 
+        'false']);
+        
+        header('HTTP/1.1 405 Method Not Allowed');
+        echo($failure_msg);
+        exit();
     }
 
     header($response['status_code_header']);
@@ -108,7 +123,8 @@ class Links{
 
     // Links name does not exist, return 404
     if($doesLinkNameExist['checkLink'] == 0){
-      return $this->notFoundResponse();       
+      $response['status_code_header'] = 'HTTP/1.1 404 Not Found';
+      return $response;       
     }
 
     $this->links_model->updateGoLink($golink, $link_name, $user_email);
@@ -177,15 +193,8 @@ class Links{
   private function badRequest()
   {
     $response['status_code_header'] = 'HTTP/1.1 400 Bad Request';
-    $response['body'] = json_encode(['Message' => 'Check that payload fields are correct.', 'Success' => 
+    $response['body'] = json_encode(['Message' => 'Make sure the payload fields and the URI path are correct.', 'Success' => 
     'false']);
     return $response;
-  }  
-
-  // Resource not found, return 404
-  private function notFoundResponse()
-  {
-    $response['status_code_header'] = 'HTTP/1.1 404 Not Found';
-    return $response;
-  }  
+  }    
 }

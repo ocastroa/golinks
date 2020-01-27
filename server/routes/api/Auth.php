@@ -3,15 +3,11 @@ namespace Src\Routes\Api;
 use Src\Model\SessionsModel;
 use Src\Model\UsersModel;
 
-// call Google Client API to get tokens and get user's basic profile info
-/* call session function to store user's email in session and send session id to client in cookie. Store session id in Apache webserver db along with username and other details. When user makes a new request, the client will pass the cookie with session id which will be verified with the webserver db. If valid, the user's email will be selected from the session info and will be used for the other endpoints
-
-*/
 session_start();
 
 class Auth{
   // Delete session from db
-  public static function logUserOut($db){
+  public static function logOutUser($client, $db){
     // No cookie and session to remove, redirect to login page
     if(!isset($_COOKIE['PHPSESSID'])){
       echo("redirecting to login page");
@@ -20,54 +16,63 @@ class Auth{
     $sessions_model = new SessionsModel($db);
     $sessions_model->deleteSession($_COOKIE['PHPSESSID']);
 
+    // Revoke access token
+    $client->revokeToken();
+
     session_destroy();
     unset($_COOKIE['PHPSESSID']);
+    
     // Delete cookie on client side by setting expiration date to past date
     setcookie('PHPSESSID', '', time()- 3600, '/');
 
     // redirect user to login page
+    echo("redirecting to login page");
   }
 
-  public static function getUserProfile($db){
-    // get id_token from payload
-    // verify id_token
-    // get users info i.e. email and name
-    
-    $user_email = "pgibson@gmail.com";
-    $name = "Paul Gibson";
-    $name_arr = explode(' ', $name); // Split first name and last name
+  /**
+ * NOTE: The following is not the full implementation for Google Sign-In. To see the full implementation, check out the documentation - 'https://developers.google.com/identity/sign-in/web/backend-auth'
+ * 
+ * Here, we use OAuth 2.0 Playground to quickly get the access token. First, select the 'Google OAuth2 API v2' api and select the 'userinfo.email' and 'userinfo.profile' options. Then, click 'Exchange authorization code for tokens' to get the access token. Include the access token inside the payload, with key name 'access_token', and send a POST request to the endpoint '/v1/auth'. Doing so will call the static function below. 
+ * Make sure to first set the values of CLIENT_ID and CLIENT_SECRET in your .env file.
+ */
 
-    $user_model = new UsersModel($db);
-    $result = $user_model->getUser($user_email);
+  public static function logInUser($client, $db){
+    // Get access token from payload
+    $token = (array) json_decode(file_get_contents('php://input'), TRUE);
 
-    // Add new user to db
-    if (!$result) {
-      $new_user = [
-      'first_name' => $name_arr[0],
-      'last_name' => $name_arr[1],
-      'email' => $user_email
-      ];
+    // Apply an access token to a new Google_Client object
+    $client->setAccessToken($token['access_token']);
 
-      $user_model->addUser($new_user);
+    $google_service = new \Google_Service_Oauth2($client);
+
+    //Get user profile
+    $payload = $google_service->userinfo->get();
+   
+    if($payload){
+      $user_email = $payload['email'];
+      $name = $payload['name'];
+      $name_arr = explode(' ', $name); // Split first name and last name
+
+      $user_model = new UsersModel($db);
+      $result = $user_model->getUser($user_email);
+  
+      // Add new user to db
+      if (!$result) {
+        $new_user = [
+        'first_name' => $name_arr[0],
+        'last_name' => $name_arr[1],
+        'email' => $user_email
+        ];
+  
+        $user_model->addUser($new_user);
+      }
+  
+      self::startSession($db, $user_email);  
+    } else{
+      header('HTTP/1.1 401 Unauthorized');
+      echo("redirecting to login page");
+      exit();
     }
-
-    self::startSession($db, $user_email);
-
-    // redirect user to their dashboard
-
-    // put client_id in .env
-    // $client = new Google_Client(['client_id' => $CLIENT_ID]);  // Specify the CLIENT_ID of the app that accesses the backend
-    // $payload = $client->verifyIdToken($id_token);
-    // if ($payload) {
-    //   // get users email and name(parse name to first and last name)
-    //   $userid = $payload['sub'];
-    //   $user_email = $payload['sub'];
-    //   startSession($db, $user_email);
-    //   // If request specified a G Suite domain:
-    //   //$domain = $payload['hd'];
-    // } else {
-    //   // Invalid ID token
-    // }
   }
 
   private static function startSession($db, $user_email){    

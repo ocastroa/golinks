@@ -37,10 +37,10 @@ switch($endpoint){
         echo(json_encode(['Message' => 'Invalid URI', 'Success' => 
         'false']));
       }
-      Auth::logUserOut($db_connection);
+      Auth::logOutUser($client, $db_connection);
     }
     else{
-      Auth::getUserProfile($db_connection);
+      Auth::logInUser($client, $db_connection);
     }
     break;
         
