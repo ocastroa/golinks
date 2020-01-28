@@ -6,13 +6,18 @@ use Src\Model\UsersModel;
 session_start();
 
 class Auth{
-  // Delete session from db
+   /*
+    @route   GET v1/auth/logout
+    @desc    Log user out and redirect to login page
+    @access  Public
+  */
   public static function logOutUser($client, $db){
     // No cookie and session to remove, redirect to login page
     if(!isset($_COOKIE['PHPSESSID'])){
       echo("redirecting to login page");
     }
 
+    // Delete session from db
     $sessions_model = new SessionsModel($db);
     $sessions_model->deleteSession($_COOKIE['PHPSESSID']);
 
@@ -30,12 +35,18 @@ class Auth{
   }
 
   /**
- * NOTE: The following is not the full implementation for Google Sign-In. To see the full implementation, check out the documentation - 'https://developers.google.com/identity/sign-in/web/backend-auth'
- * 
- * Here, we use OAuth 2.0 Playground to quickly get the access token. First, select the 'Google OAuth2 API v2' api and select the 'userinfo.email' and 'userinfo.profile' options. Then, click 'Exchange authorization code for tokens' to get the access token. Include the access token inside the payload, with key name 'access_token', and send a POST request to the endpoint '/v1/auth'. Doing so will call the static function below. 
- * Make sure to first set the values of CLIENT_ID and CLIENT_SECRET in your .env file.
- */
+   * NOTE: The following is not the full implementation for Google Sign-In. To see the full implementation, check out the documentation - 'https://developers.google.com/identity/sign-in/web/backend-auth'
+   * 
+   * Here, we use OAuth 2.0 Playground to quickly get the access token. First, select the 'Google OAuth2 API v2' api and select the 'userinfo.email' and 'userinfo.profile' options. Then, click 'Exchange authorization code for tokens' to get the access token. Include the access token inside the payload, with key name 'access_token', and send a POST request to the endpoint '/v1/auth'. Doing so will call the static function below. 
+   * Make sure to first set the values of CLIENT_ID and CLIENT_SECRET in your .env file.
+  */
 
+    
+  /*
+    @route   POST v1/auth
+    @desc    Log user in using Google sign-in
+    @access  Public
+  */
   public static function logInUser($client, $db){
     // Get access token from payload
     $token = (array) json_decode(file_get_contents('php://input'), TRUE);

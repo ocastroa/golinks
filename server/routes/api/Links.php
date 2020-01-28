@@ -80,8 +80,13 @@ class Links{
   private function createGoLink($user_email){
     $golink = (array) json_decode(file_get_contents('php://input'), TRUE);
 
-    // Check that payload has the necessary data before adding to db
-    if(!$this->checkPayload("create", $golink)){
+    // Check that link name is included in the payload
+    if(strlen($golink['link_name'] ) < 1 || !is_string( $golink['link_name'])) {
+      return $this->badRequest();
+    }
+    
+    // Check the other fields in the payload
+    if(!$this->checkPayload($golink)){
       return $this->badRequest();
     };
 
@@ -114,7 +119,8 @@ class Links{
   private function updateGoLink($link_name, $user_email){  
     $golink = (array) json_decode(file_get_contents('php://input'), TRUE);
 
-    if(!$this->checkPayload("update", $golink)){
+    // Check that payload has the necessary data before adding to db
+    if(!$this->checkPayload($golink)){
       return $this->badRequest();
     };
 
@@ -152,41 +158,46 @@ class Links{
 
   /* 
    * Check that payload for creating and updating requests
-   * are not empty and that they are strings  
+   * are not empty and that they are strings. Link name cannot 
+   * be modified, only destination url and description.
   */
-  private function checkPayload($requestType, $golink){
-    // Only "create" request has link_name in payload
-    $link_name = ($requestType == "create") ?  $golink['link_name'] : null;
+  private function checkPayload(&$golink){
     $destination_url = $golink['destination_url'];
     $description = $golink['description'];
 
-    switch($requestType){
-      case "create":
-        // description is optional when creating golink        
-        if(strlen($link_name) < 1 || strlen($destination_url) < 1){
-          return false;
-        }
-
-        if(!is_string($link_name) || !is_string($destination_url) || !is_string($description)){
-          return false;
-        }
-
-        return true;
-        break;
-
-      case "update":
-        // Description can be empty, but not destination url
-        if(strlen($destination_url) < 1){
-          return false;
-        }
-
-        if(!is_string($destination_url) || !is_string($description)){
-          return false;
-        }
-
-        return true;
-        break;
+    if(strlen($destination_url) < 1){
+      return false;
     }
+
+    if(!is_string($destination_url) || !is_string($description)){
+      return false;
+    }
+
+    return $this->sanitizeData($golink);
+  }
+
+  // Sanitize payload fields
+  private function sanitizeData(&$golink){
+    if(isset($golink['link_name'])){
+      $golink['link_name'] = filter_var($golink['link_name'], FILTER_SANITIZE_STRING);
+
+      // remove anything that's not a letter 
+      $golink['link_name'] = preg_replace("/[^a-zA-Z]/", "", $golink['link_name']);
+
+      // lowercase link name
+      $golink['link_name'] = strtolower( $golink['link_name'] );
+    }
+
+    $golink['destination_url'] = filter_var($golink['destination_url'],FILTER_SANITIZE_URL);
+
+    // invalid url
+    if(filter_var($golink['destination_url'] , FILTER_VALIDATE_URL) == false){
+      return false;
+    }
+    
+    $golink['description'] = filter_var($golink['description'] , FILTER_SANITIZE_STRING);
+
+    return true;
   }
   
   // Payload does not have all the necessary data, return 400

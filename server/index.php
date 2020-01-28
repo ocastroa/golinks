@@ -7,14 +7,12 @@ use Src\Routes\Api\Routings;
 use Src\Routes\Api\Auth;
 use Src\Routes\Middleware\AuthMiddleware;
 
-
 header('Cache-Control: no-cache');
 header("Content-Type: text/html; charset=UTF-8");
 
 $request_uri = $_SERVER['REQUEST_URI'];
 $request_method = $_SERVER["REQUEST_METHOD"];
 
-$uri = filter_var($request_uri, FILTER_SANITIZE_URL);
 $uri = parse_url($request_uri, PHP_URL_PATH);
 $uri = explode('/', $uri);
 $endpoint = $uri[2]; 
