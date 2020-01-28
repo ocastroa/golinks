@@ -2,12 +2,15 @@
 require '../../../bootstrap.php';
 
 $statement = <<<EOS
-    INSERT INTO Links
-        (link_name, destination_url, description, user_id)
-    VALUES
-        ('git', 'https://github.com/ocastroa/', 'My git repo', 2),
-        ('dev', 'https://dev.to/', 'Dev.to home page', 1),
-        ('linkedin', 'https://www.linkedin.com/in/ocastroa/', '', 2);
+  CREATE TABLE IF NOT EXISTS Links(
+    link_id INT NOT NULL AUTO_INCREMENT,
+    link_name VARCHAR(100) NOT NULL,
+    destination_url VARCHAR(2000) NOT NULL,
+    description TEXT NULL,
+    visits_count INT NOT NULL DEFAULT 0,
+    email VARCHAR(100) NOT NULL,
+    PRIMARY KEY (link_id)
+  ) ENGINE=INNODB;
 EOS;
 
 $createTable = $db_connection->exec($statement);

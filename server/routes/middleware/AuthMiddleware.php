@@ -5,7 +5,7 @@ use Src\Model\SessionsModel;
 class AuthMiddleware{
   public static function validateSessionCookie($db){    
     if(!isset($_COOKIE['PHPSESSID'])){
-      header('HTTP/1.1 403 Forbidden');
+      header('HTTP/1.1 401 Unauthorized');
       echo("redirecting to login page");
       exit();
     }

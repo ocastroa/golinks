@@ -19,12 +19,10 @@ $endpoint = $uri[2];
 
 // Check that endpoint starts with /v1, else return 404
 if ($uri[1] !== 'v1') {
-  header("HTTP/1.1 404 Not Found");
+  header("HTTP/1.1 400 Bad Request");
   echo(json_encode(['Message' => 'Make sure that endpoint starts with /v1', 'Success' => 
   'false']));
 }
-
-$user_id = null;
 
 switch($endpoint){
   case 'auth':

@@ -45,7 +45,8 @@ class Routings{
     // Links name does not exist or was not entered
     if($doesLinkNameExist['checkLink'] == 0 || !isset($link_name)){
       // redirect to user's dashboard 
-      echo("redirecting to login page");
+      echo("redirecting to user's dashboard");
+      exit();
     }
 
     // Increase visit count by 1

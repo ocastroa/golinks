@@ -107,12 +107,12 @@ class Links{
     $result = $this->links_model->getNewGoLink($user_email);
 
     $response['status_code_header'] = 'HTTP/1.1 201 Created';
-    $response['body'] =  json_encode($result);
+    $response['body'] = json_encode($result);
     return $response; 
   }
 
   /*
-    @route   PUT v1/links/
+    @route   PUT v1/links/:link_name
     @desc    Update a golink for a user
     @access  Public
   */
@@ -127,10 +127,10 @@ class Links{
     // Check if link name exists
     $doesLinkNameExist = $this->links_model->checkLinkName($link_name, $user_email);
 
-    // Links name does not exist, return 404
+    // Links name does not exist, redirect user to their dashboard
     if($doesLinkNameExist['checkLink'] == 0){
-      $response['status_code_header'] = 'HTTP/1.1 404 Not Found';
-      return $response;       
+      echo("redirecting to user's dashboard");
+      exit();    
     }
 
     $this->links_model->updateGoLink($golink, $link_name, $user_email);
@@ -144,7 +144,7 @@ class Links{
   }
   
   /*
-    @route   DELETE v1/links
+    @route   DELETE v1/links/:link_name
     @desc    Delete a golink
     @access  Public
   */

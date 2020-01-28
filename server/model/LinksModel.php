@@ -185,8 +185,8 @@ class LinksModel{
 
     $stmt = $this->db->prepare($queryStr);
     $stmt->execute([
-    'link_name' => $link_name,
-    'email' => $email
+      'link_name' => $link_name,
+      'email' => $email
     ]);
     $result = $stmt->rowCount();
     return $result;

@@ -15,13 +15,14 @@ class Auth{
     // No cookie and session to remove, redirect to login page
     if(!isset($_COOKIE['PHPSESSID'])){
       echo("redirecting to login page");
+      exit();
     }
 
     // Delete session from db
     $sessions_model = new SessionsModel($db);
     $sessions_model->deleteSession($_COOKIE['PHPSESSID']);
 
-    // Revoke access token
+    // Revoke Google access token
     $client->revokeToken();
 
     session_destroy();
@@ -32,6 +33,7 @@ class Auth{
 
     // redirect user to login page
     echo("redirecting to login page");
+    exit();
   }
 
   /**
@@ -70,9 +72,9 @@ class Auth{
       // Add new user to db
       if (!$result) {
         $new_user = [
-        'first_name' => $name_arr[0],
-        'last_name' => $name_arr[1],
-        'email' => $user_email
+          'first_name' => $name_arr[0],
+          'last_name' => $name_arr[1],
+          'email' => $user_email
         ];
   
         $user_model->addUser($new_user);
@@ -95,5 +97,4 @@ class Auth{
     // Send cookie session id to client
     setcookie('PHPSESSID', $session_id, 0, '/');
   }
-
 }
