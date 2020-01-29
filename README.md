@@ -1,6 +1,6 @@
 # Golinks API built with Vanilla PHP
 
-A REST API for a URL shortener that replaces long URLs with short, easy to remember [golinks](https://medium.com/@golinks/the-full-history-of-go-links-and-the-golink-system-cbc6d2c8bb3). Users will create a link name and link it to the URL they want to shorten. All shorten URLs start with 'go/', followed by the link name i.e. 'go/git'. A golink will be distinct for every user. For example, 'go/git' will be different for Person A and Person B. Users will login, using their personal gmail, with Google Sign-In and can start creating their own golinks. The API is still a work in progress, but the main functionalities are working. You can play around with the API in your local development by following the instructions below.
+A REST API for a URL shortener that replaces long URLs with short, easy to remember [golinks](https://medium.com/@golinks/the-full-history-of-go-links-and-the-golink-system-cbc6d2c8bb3). Users will create a link name and link it to the URL they want to shorten. All shorten URLs start with 'go/', followed by the link name i.e. 'go/git'. A golink will be distinct for every user. For example, 'go/git' will be different for Person A and Person B. Users will login using their personal gmail and can start creating their own golinks. The API is still a work in progress, but the main functionalities are working. You can play around with the API in your local environment by following the instructions below.
 
 ## Initial Setup
 
@@ -125,7 +125,7 @@ php -S 127.0.0.1:8000 -t server
 GET http://127.0.0.1:8000/v1/routings/dev
 ```
 
-- Since a golink named 'dev' exists, we will be redirected to the destination URL. If we were to replace 'dev' with a golink that has not been created, we would be redirected to the dashboard.
+- Since the link name 'dev' exists, we will be redirected to the destination URL. If we were to replace 'dev' with a link name that has not been created, we would be redirected to the dashboard.
 
 - You can test the redirects in the browser. To do so, you must set the sessions cookie first by typing the following in the browser console (this was done in Chrome):
 
