@@ -8,7 +8,7 @@ use Src\Routes\Api\Auth;
 use Src\Routes\Middleware\AuthMiddleware;
 
 header('Cache-Control: no-cache');
-header("Content-Type: text/html; charset=UTF-8");
+header("Content-Type: application/json; charset=UTF-8");
 
 $request_uri = $_SERVER['REQUEST_URI'];
 $request_method = $_SERVER["REQUEST_METHOD"];

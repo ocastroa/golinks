@@ -54,6 +54,7 @@ class Routings{
     $destination_url = $this->links_model->getDestinationUrl($link_name, $user_email);
 
     header('HTTP/1.1 302 Found');
+    header("Content-Type: text/html; charset=UTF-8");
     header('Status: 302');
     header("Location: {$destination_url['destination_url']}");
     exit();

@@ -68,6 +68,7 @@ class Users{
 
     $this->user_model->deleteUser($user_email);
 
+    // Return 204 for now, but in production redirect user to the login page
     $response['status_code_header'] = 'HTTP/1.1 204 OK';
     $response['body'] = null;
     return $response;
