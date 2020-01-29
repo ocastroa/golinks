@@ -1,6 +1,6 @@
 # Golinks API built with Vanilla PHP
 
-A REST API for a URL shortener that replaces long URLs with short, easy to remember [golinks](https://medium.com/@golinks/the-full-history-of-go-links-and-the-golink-system-cbc6d2c8bb3). Users will create a link name and link it to the URL they want to shorten. All shorten URLs start with 'go/', followed by the link name i.e. 'go/git'. A golink will be distinct for every user. For example, 'go/git' will be different for Person A and Person B. Users will login using their personal gmail and can start creating their own golinks. The API is still a work in progress, but the main functionalities are working. You can play around with the API in your local environment by following the instructions below.
+A REST API for a URL shortener that replaces long URLs with short, easy to remember [golinks](https://medium.com/@golinks/the-full-history-of-go-links-and-the-golink-system-cbc6d2c8bb3). Users will create a link name and link it to the URL they want to shorten. All shorten URLs start with 'go/', followed by the link name i.e. 'go/git'. A golink will be distinct for every user. Users will login using their personal gmail and can start creating their own golinks. The API is still a work in progress, but the main functionalities are working. You can play around with the API in your local environment by following the instructions below.
 
 ## Initial Setup
 
@@ -38,7 +38,7 @@ php dbseed.php
 
 - Since we are authenticating users using Google Sign-in, you need to create your OAuth client credentials to obtain the CLIENT_ID and CLIENT_SECRET. Look at the following [documentation](https://developers.google.com/identity/protocols/OAuth2) for an overview. You can also check out this [tutorial](https://www.webslesson.info/2019/09/how-to-make-login-with-google-account-using-php.html). Once you obtain the CLIENT_ID and CLIENT_SECRET, add them to the .env file.
 
-- Final step is to disallow SSL verification to prevent a [PHP Fatal error](https://github.com/googleapis/google-cloud-php/issues/1821). Since we are in development mode, we don't need SSL verification. Go to the file found in "vendor\google\auth\src\HttpHandler\HttpHandlerFactory.php" and on line 34, make the following change:
+- Final step is to disallow SSL verification to prevent a [PHP Fatal error](https://github.com/googleapis/google-cloud-php/issues/1821). Since we are in development mode, we don't need SSL verification. Go to the file in "vendor\google\auth\src\HttpHandler\HttpHandlerFactory.php" and on line 34, make the following change:
 
 ```bash
 $client = $client ?: new Client(['verify' => false]);
