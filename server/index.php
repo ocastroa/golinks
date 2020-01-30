@@ -26,6 +26,13 @@ if ($uri[1] !== 'v1') {
 
 switch($endpoint){
   case 'auth':
+    if($request_method != 'POST'){
+      header('HTTP/1.1 405 Method Not Allowed');
+      echo(json_encode(['Message' => "Method {$request_method} is not allowed for this resource", 'Success' => 
+      'false']));
+      exit();
+    }
+
     // User is logging out
     if(isset($uri[3])){
       if($uri[3] != 'logout'){

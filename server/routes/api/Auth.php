@@ -7,7 +7,7 @@ session_start();
 
 class Auth{
    /*
-    @route   GET v1/auth/logout
+    @route   POST v1/auth/logout
     @desc    Log user out and redirect to login page
     @access  Public
   */
