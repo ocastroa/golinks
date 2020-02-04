@@ -61,7 +61,7 @@ class Links{
   /*
     @route   GET v1/links
     @desc    Get all links user has created
-    @access  Public
+    @access  Private
   */
   public function getAllGoLinks($user_email){
     $result = $this->links_model->getAllGoLinks($user_email);
@@ -75,7 +75,7 @@ class Links{
   /*
     @route   POST v1/links
     @desc    Create a new golink for a user
-    @access  Public
+    @access  Private
   */
   private function createGoLink($user_email){
     $golink = (array) json_decode(file_get_contents('php://input'), TRUE);
@@ -114,7 +114,7 @@ class Links{
   /*
     @route   PUT v1/links/:link_name
     @desc    Update a golink for a user
-    @access  Public
+    @access  Private
   */
   private function updateGoLink($link_name, $user_email){  
     $golink = (array) json_decode(file_get_contents('php://input'), TRUE);
@@ -146,7 +146,7 @@ class Links{
   /*
     @route   DELETE v1/links/:link_name
     @desc    Delete a golink
-    @access  Public
+    @access  Private
   */
   private function deleteGoLink($link_name, $user_email){
     $this->links_model->deleteGoLink($link_name, $user_email);

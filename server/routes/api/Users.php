@@ -42,7 +42,7 @@ class Users{
   /*
     @route   GET v1/users
     @desc    Get user's information
-    @access  Public
+    @access  Private
   */
   private function getUser($user_email){
     $result =  $this->user_model->getUser($user_email);
@@ -58,7 +58,7 @@ class Users{
   /*
     @route   DELETE v1/users
     @desc    Delete a user
-    @access  Public
+    @access  Private
   */
   private function deleteUser($user_email){
     $result =  $this->user_model->getUser($user_email);

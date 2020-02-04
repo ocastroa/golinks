@@ -36,7 +36,7 @@ class Routings{
   /*
     @route   GET /v1/routings/:link_name
     @desc    Redirect user to destination url
-    @access  Public
+    @access  Private
   */
   private function redirect($user_email, $link_name){
     // Check if link name exists
